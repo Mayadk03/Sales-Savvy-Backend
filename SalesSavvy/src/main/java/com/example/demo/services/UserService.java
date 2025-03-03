@@ -8,11 +8,11 @@ import com.example.demo.entities.User;
 import com.example.demo.repositories.UserRepository;
 
 @Service
-public class RegistrationService {
+public class UserService {
 	private final UserRepository userrepository;
 	private final BCryptPasswordEncoder passwordEncoder;
 	@Autowired
-	public RegistrationService(UserRepository userrepository) {
+	public UserService(UserRepository userrepository) {
 		this.userrepository = userrepository;
 		passwordEncoder = new BCryptPasswordEncoder();
 	}

@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entities.User;
-import com.example.demo.services.RegistrationService;
+import com.example.demo.services.UserService;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/api/user")
 public class RegisterationController {
-	private RegistrationService userService;
-	public RegisterationController(RegistrationService userService) {
+	private UserService userService;
+	public RegisterationController(UserService userService) {
 		this.userService= userService;
 	}
 	

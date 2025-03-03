@@ -23,20 +23,20 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 @Service
-public class LoginService {
+public class AuthService {
 	private final Key SIGNING_KEY;
 	private final UserRepository userrepository;
 	private final JWTTokenRepository jwtTokenRepository;
 	private final BCryptPasswordEncoder passwordEncoder;
 	@Autowired
-	public LoginService(UserRepository userrepository, JWTTokenRepository jwtTokenRepository,@Value("${jwt.secret}") String jwtSecret) {
+	public AuthService(UserRepository userrepository, JWTTokenRepository jwtTokenRepository,@Value("${jwt.secret}") String jwtSecret) {
 		super();
 		this.userrepository = userrepository;
 		this.jwtTokenRepository = jwtTokenRepository;
 		passwordEncoder = new BCryptPasswordEncoder();
 		this.SIGNING_KEY= Keys.hmacShaKeyFor(jwtSecret.getBytes());
 	}
-	public User authenticate(String username, String password) {
+	public User authenticateUser(String username, String password) {
 		User user = userrepository.findByUsername(username).orElseThrow(()-> new RuntimeException("Invalid Username"));
 		if(!passwordEncoder.matches(password, user.getPassword())) {
 			throw new RuntimeException("Invalid password");
@@ -71,4 +71,36 @@ public class LoginService {
 				.compact();
 		return token;
 	}
+	public boolean validateToken(String token) {
+		try {
+			System.err.println("Validating token");
+			
+			//parse and validate token
+			Jwts.parserBuilder()
+			.setSigningKey(SIGNING_KEY)
+			.build()
+			.parse(token);
+			
+			Optional<JWTToken> jwtToken = Optional.of(jwtTokenRepository.findByToken(token));
+			if(jwtToken.isPresent()) {
+				System.err.println("Token expiry: "+jwtToken.get().getExpireAt());
+				System.err.println("Current time : "+LocalDateTime.now());
+				return jwtToken.get().getExpireAt().isAfter(LocalDateTime.now());
+			}
+			
+			return false;
+		} catch (Exception e) {
+			System.err.println("Token validation failed: "+e.getMessage());
+			return false;
+		}
+	}
+	public String extractUsername(String token) {
+		return Jwts.parserBuilder()
+				.setSigningKey(SIGNING_KEY)
+				.build()
+				.parseClaimsJws(token)
+				.getBody()
+				.getSubject();
+	}
+	
 }
