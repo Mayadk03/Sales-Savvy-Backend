@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,14 +21,18 @@ import com.example.demo.services.ProductService;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/api/product")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@RequestMapping("/api")
 public class ProductController {
 	@Autowired
 	private ProductService productService;
 
+	@GetMapping("/products")
 	public ResponseEntity<Map<String, Object>> getProducts(@RequestParam(required = false) String category, HttpServletRequest request) {
 		try {
 			User authenticatedUser = (User) request.getAttribute("authenticatedUser");
+			System.out.println("Authenticated User: " + authenticatedUser);
+
 			if(authenticatedUser==null) {
 				return ResponseEntity.status(401).body(Map.of("error", "Unauthorized access"));
 			}

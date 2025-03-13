@@ -102,5 +102,7 @@ public class AuthService {
 				.getBody()
 				.getSubject();
 	}
-	
+	public void logOut(User user) {
+		jwtTokenRepository.deleteByUserId(user.getUserId());
+	}
 }

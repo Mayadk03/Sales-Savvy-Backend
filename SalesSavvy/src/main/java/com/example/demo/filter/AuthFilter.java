@@ -30,19 +30,16 @@ public class AuthFilter implements Filter{
 
 	private static final Logger logger = LoggerFactory.getLogger(AuthFilter.class);
 	private final UserRepository repository;
-	private final UserService userService;
 	private final AuthService authService;
-	
-	private static final String ALLOWED_ORIGIN = "http://localhost:5173";
-	private static final String[] UNAUTHENTICATED_PATHS = {"/api/user/register","/api/auth/login"};
-	
-	
+		
 	public AuthFilter(UserRepository repository,UserService userService,AuthService authService) {
 		System.out.println("Filter started");
-		this.userService=userService;
 		this.repository=repository;
 		this.authService = authService;
 	}
+	
+	private static final String ALLOWED_ORIGIN = "http://localhost:5173";
+	private static final String[] UNAUTHENTICATED_PATHS = {"/api/user/register","/api/auth/login"};
 	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
